@@ -1,24 +1,11 @@
-import { useState } from "react";
 import TaskCard from "./TaskCard";
-import NewTaskForm from "./NewTaskForm";
+import type { Task } from "../App.tsx";
 
-export interface Task {
-  id: string;
-  title: string;
-  status: "TODO" | "IN_PROGRESS" | "DONE";
+interface BoardProps {
+  tasks: Task[];
 }
 
-const initialTaks: Task[] = [
-  { id: "1", title: "Setup Vite Project", status: "DONE" },
-  { id: "2", title: "Learn TS Interfaces", status: "IN_PROGRESS" },
-  { id: "3", title: "Implement Drag and Drop", status: "TODO" },
-  { id: "4", title: "Workout Tracker", status: "DONE" },
-  { id: "5", title: "Workout Tracker 2", status: "DONE" },
-  { id: "6", title: "Workout Tracker 3", status: "DONE" },
-];
-
-export default function Board() {
-  const [tasks, setTasks] = useState<Task[]>(initialTaks);
+export default function Board({ tasks }: BoardProps) {
   const toDo = tasks.filter((t) => t.status === "TODO");
   const inProgress = tasks.filter((t) => t.status === "IN_PROGRESS");
   const done = tasks.filter((t) => t.status === "DONE");

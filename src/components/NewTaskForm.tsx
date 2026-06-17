@@ -1,8 +1,19 @@
 import { useState } from "react";
 
-export default function NewTaskForm() {
+export default function NewTaskForm({onAddTask} : {onAddTask: (title: string) => void}) {
   const [isVisible, setIsVisible] = useState(false);
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>{
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const title = formData.get("title") as string;
+
+    if(title.trim()){
+        onAddTask(title.trim());
+        setIsVisible(false);
+    }
+  }
+  
   return (
     <div className="flex flex-col">
       <button
@@ -30,7 +41,7 @@ export default function NewTaskForm() {
               X
             </button>
             <form
-              action="POST"
+              onSubmit={handleSubmit}
               className={`position-absolute z-10 grid grid-cols-2 grid-rows-3 gap-3 mt-10`}
             >
               <label htmlFor="title">Title: </label>
