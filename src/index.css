@@ -1,0 +1,42 @@
+@import "tailwindcss";
+body{
+    background-color: rgb(230, 230, 230);
+    color: rgb(17, 17, 17);
+}
+.google-sans {
+    font-family: "Google Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-variation-settings: 
+    "GRAD" 0;
+  }
+.app-container{
+    font-family: 'Google Sans';
+}
+.app-container>h1{
+    align-self: center;
+}
+.column{
+    border: 2px solid rgb(82, 82, 238);
+    border-radius: 10px;
+    flex-direction: column;
+    display: flex;
+    width: 350px;
+}
+.column hr{
+    width: 95%;
+    height: 2px;
+}
+.column>h2{
+    margin-bottom: 15px;
+    align-self: center;
+}
+.card{
+    transition: transform 0.4s ease;
+    width: 90%;
+}
+.card:hover{
+    transform: translateX(5px);
+    cursor: pointer;
+}
