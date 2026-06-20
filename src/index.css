@@ -18,7 +18,7 @@ body{
     align-self: center;
 }
 .column{
-    /* border: 2px solid rgb(82, 82, 238); */
+    border: 2px solid rgb(82, 82, 238);
     border-radius: 10px;
     flex-direction: column;
     display: flex;

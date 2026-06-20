@@ -4,9 +4,16 @@ import type { Task } from "../App.tsx";
 interface BoardProps {
   tasks: Task[];
   onUpdateTask(taskId: string, status: "TODO" | "IN_PROGRESS" | "DONE"): void;
+  onDeleteTask(taskId: string): void;
+  onEditTask(taskId: string, title: string, priority: number): void;
 }
 
-export default function Board({ tasks, onUpdateTask }: BoardProps) {
+export default function Board({
+  tasks,
+  onUpdateTask,
+  onDeleteTask,
+  onEditTask,
+}: BoardProps) {
   const toDo = tasks.filter((t) => t.status === "TODO");
   const inProgress = tasks.filter((t) => t.status === "IN_PROGRESS");
   const done = tasks.filter((t) => t.status === "DONE");
@@ -29,27 +36,33 @@ export default function Board({ tasks, onUpdateTask }: BoardProps) {
   return (
     <div className="flex flex-row w-full gap-4 justify-center m-auto">
       <div
-        className="column h-full min-h-96 border-4 border-red-500"
-        onDragOver={(e) => {e.preventDefault();
-            console.log("Hovering over TO DO!");
+        className="column h-full min-h-96 border-4"
+        onDragOver={(e) => {
+          e.preventDefault();
+          console.log("Hovering over TO DO!");
         }}
-        // onDragEnter={(e) => e.preventDefault()}
         onDrop={handleDropInToDo}
-
       >
         <h2 className="text-2xl font-bold">To Do</h2>
         <hr />
         <ol>
           {toDo.map((t) => (
-            <TaskCard key={t.id} subject={t.title} id={t.id} />
+            <TaskCard
+              key={t.id}
+              subject={t.title}
+              id={t.id}
+              priority={t.priority}
+              onDeleteTask={onDeleteTask}
+              onEditTask={onEditTask}
+            />
           ))}
         </ol>
       </div>
       <div
         className="column h-full min-h-96"
         onDragOver={(e) => {
-            e.preventDefault()
-            console.log("Hovering over IN!");
+          e.preventDefault();
+          console.log("Hovering over IN!");
         }}
         onDrop={handleDropInInProgress}
       >
@@ -57,7 +70,14 @@ export default function Board({ tasks, onUpdateTask }: BoardProps) {
         <hr />
         <ol>
           {inProgress.map((t) => (
-            <TaskCard key={t.id} subject={t.title} id={t.id} />
+            <TaskCard
+              key={t.id}
+              subject={t.title}
+              id={t.id}
+              priority={t.priority}
+              onDeleteTask={onDeleteTask}
+              onEditTask={onEditTask}
+            />
           ))}
         </ol>
       </div>
@@ -70,7 +90,14 @@ export default function Board({ tasks, onUpdateTask }: BoardProps) {
         <hr />
         <ol>
           {done.map((t) => (
-            <TaskCard key={t.id} subject={t.title} id={t.id} />
+            <TaskCard
+              key={t.id}
+              subject={t.title}
+              id={t.id}
+              priority={t.priority}
+              onDeleteTask={onDeleteTask}
+              onEditTask={onEditTask}
+            />
           ))}
         </ol>
       </div>

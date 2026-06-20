@@ -1,19 +1,43 @@
 import { useState } from "react";
+import { z } from "zod";
+
+const taskSchema = z.object({
+  title: z.string().min(1, "Title cannot be empty!"),
+  priority: z
+    .number({ invalid_type_error: "Priority must be a number" })
+    .min(1, "Priority must be atleast 1")
+    .max(10, "Priority must be atmost 10"),
+});
 
 export default function NewTaskForm({
   onAddTask,
 }: {
-  onAddTask: (title: string) => void;
+  onAddTask: (title: string, priority: number) => void;
 }) {
   const [isVisible, setIsVisible] = useState(false);
+
+  const [errors, setErrors] = useState<{ title?: string; priority?: string }>(
+    {}
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const title = formData.get("title") as string;
+    const formValues = {
+      title: (formData.get("title") as string).trim(),
+      priority: Number(formData.get("priority")),
+    };
 
-    if (title.trim()) {
-      onAddTask(title.trim());
+    const result = taskSchema.safeParse(formValues);
+    if (!result.success) {
+      const formattedErrors = result.error.format();
+      setErrors({
+        title: formattedErrors.title?._errors[0],
+        priority: formattedErrors.priority?._errors[0],
+      });
+    } else {
+      setErrors({});
+      onAddTask(result.data.title, result.data.priority);
       setIsVisible(false);
     }
   };
@@ -54,13 +78,19 @@ export default function NewTaskForm({
                 name="title"
                 className="border-2 rounded-md border-double h-10"
               />
+              {errors.title && (
+                <span className="text-red-500 text-sm">{errors.title}</span>
+              )}
 
-              <label htmlFor="priority">Priority: </label>
+              <label htmlFor="priority">Priority (1-10): </label>
               <input
                 type="text"
                 name="priority"
                 className="border-2 rounded-md border-double h-10"
               />
+              {errors.priority && (
+                <span className="text-red-500 text-sm">{errors.priority}</span>
+              )}
 
               <button
                 type="submit"
