@@ -1,19 +1,23 @@
 import { useState } from "react";
 
-export default function NewTaskForm({onAddTask} : {onAddTask: (title: string) => void}) {
+export default function NewTaskForm({
+  onAddTask,
+}: {
+  onAddTask: (title: string) => void;
+}) {
   const [isVisible, setIsVisible] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>{
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const title = formData.get("title") as string;
 
-    if(title.trim()){
-        onAddTask(title.trim());
-        setIsVisible(false);
+    if (title.trim()) {
+      onAddTask(title.trim());
+      setIsVisible(false);
     }
-  }
-  
+  };
+
   return (
     <div className="flex flex-col">
       <button
