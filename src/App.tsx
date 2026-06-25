@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Board from "./components/Board";
 import NewTaskForm from "./components/NewTaskForm";
+import Signup from "./components/Signup";
+import Signin from "./components/Signin";
 
 export interface Task {
   id: string;
@@ -41,7 +44,7 @@ export default function App() {
 
   const handleUpdateTask = (
     id: string,
-    status: "TODO" | "IN_PROGRESS" | "DONE"
+    status: "TODO" | "IN_PROGRESS" | "DONE",
   ) => {
     const updatedTasks = tasks.map((task) => {
       if (task.id === id) {
@@ -62,15 +65,28 @@ export default function App() {
     setTasks(editedTasks);
   };
   return (
-    <div className="app-container flex flex-col align-middle w-full m-auto">
-      <h1 className="text-4xl mb-10 align-middle">Agile Tracker</h1>
-      <NewTaskForm onAddTask={handleAddTask} />
-      <Board
-        tasks={tasks}
-        onUpdateTask={handleUpdateTask}
-        onDeleteTask={handleDeleteTask}
-        onEditTask={handleEditTask}
-      />
-    </div>
+    <BrowserRouter>
+      <div className="app-container flex flex-col align-middle w-full m-auto">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <h1 className="text-4xl mb-10 align-middle">Agile Tracker</h1>
+                <NewTaskForm onAddTask={handleAddTask} />
+                <Board
+                  tasks={tasks}
+                  onUpdateTask={handleUpdateTask}
+                  onDeleteTask={handleDeleteTask}
+                  onEditTask={handleEditTask}
+                />
+              </>
+            }
+          />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/signin" element={<Signin />}/>
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }

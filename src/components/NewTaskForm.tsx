@@ -3,10 +3,7 @@ import { z } from "zod";
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title cannot be empty!"),
-  priority: z
-    .number({ invalid_type_error: "Priority must be a number" })
-    .min(1, "Priority must be atleast 1")
-    .max(10, "Priority must be atmost 10"),
+  priority: z.int()
 });
 
 export default function NewTaskForm({
@@ -82,7 +79,7 @@ export default function NewTaskForm({
                 <span className="text-red-500 text-sm">{errors.title}</span>
               )}
 
-              <label htmlFor="priority">Priority (1-10): </label>
+              <label htmlFor="priority">Priority(Integer): </label>
               <input
                 type="text"
                 name="priority"
