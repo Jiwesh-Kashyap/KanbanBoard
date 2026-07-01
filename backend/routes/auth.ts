@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcryptjs";
-import {prisma} from "../prismaClient.js";
+import { prisma } from "../prismaClient.js";
+import {createToken, validateToken} from "../services/authn.js";
 
 const authRouter = express.Router();
 
@@ -30,6 +31,30 @@ authRouter.post("/signup", async (req, res) => {
     });
   } catch (error) {
     console.error("Signup error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+authRouter.post("/signin", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const stored = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (!stored) {
+      return res.status(400).json({ message: "User does not exists!" });
+    }
+    const isMatch = await bcrypt.compare(password, stored.password);
+    if(isMatch){
+        const token = createToken({
+            id: stored.id,
+            name: stored.name || "", 
+            email: stored.email
+        })
+        return res.status(200).json({token, message: "Signed in successfully"});
+    }
+  } catch (error) {
+    console.error("Signin error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });

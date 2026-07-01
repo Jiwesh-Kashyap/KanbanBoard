@@ -25,7 +25,7 @@ export default function Signin() {
 
       if (response.ok) {
         const data = await response.json();
-        navigate("/"); // Navigate to dashboard/home on success
+        navigate("/");
       } else {
         const data = await response.json();
         alert(data.message || "Sign in failed");
