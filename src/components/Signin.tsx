@@ -24,7 +24,6 @@ export default function Signin() {
       );
 
       if (response.ok) {
-        const data = await response.json();
         navigate("/");
       } else {
         const data = await response.json();

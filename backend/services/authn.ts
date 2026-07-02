@@ -29,5 +29,3 @@ export function validateToken(token: string): tokenPayloadInterface {
   const payload = JWT.verify(token, secret) as tokenPayloadInterface;
   return payload;
 }
-
-module.exports = { createToken, validateToken };

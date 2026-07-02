@@ -29,7 +29,6 @@ export default function Signup() {
         },
       );
       if (response.ok) {
-        const data = await response.json();
         navigate("/");
       } else {
         const data = await response.json();

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Board from "./components/Board";
 import NewTaskForm from "./components/NewTaskForm";
 import Signup from "./components/Signup";
 import Signin from "./components/Signin";
+import DeleteAllButton from "./components/DeleteAllButton";
 
 export interface Task {
   id: string;
@@ -28,7 +29,40 @@ const initialTasks: Task[] = [
 ];
 
 export default function App() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/boards`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+
+          setTasks(data);
+        } else if (response.status === 401) {
+          if (
+            window.location.pathname !== "/signin" &&
+            window.location.pathname !== "/signup"
+          ) {
+            window.location.href = "/signin";
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch tasks: ", error);
+      }
+    };
+    fetchTasks();
+  }, []);
+
   tasks.sort(function (a, b) {
     return b.priority - a.priority;
   });
@@ -64,6 +98,9 @@ export default function App() {
     });
     setTasks(editedTasks);
   };
+  const handleDeleteAll = () => {
+    setTasks([]);
+  };
   return (
     <BrowserRouter>
       <div className="app-container flex flex-col align-middle w-full m-auto">
@@ -74,6 +111,7 @@ export default function App() {
               <>
                 <h1 className="text-4xl mb-10 align-middle">Agile Tracker</h1>
                 <NewTaskForm onAddTask={handleAddTask} />
+                <DeleteAllButton handleDeleteAll={handleDeleteAll} />
                 <Board
                   tasks={tasks}
                   onUpdateTask={handleUpdateTask}
@@ -84,7 +122,7 @@ export default function App() {
             }
           />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/signin" element={<Signin />}/>
+          <Route path="/signin" element={<Signin />} />
         </Routes>
       </div>
     </BrowserRouter>

@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import { prisma } from "../prismaClient.js";
-import {createToken, validateToken} from "../services/authn.js";
+import { createToken, validateToken } from "../services/authn.js";
 
 const authRouter = express.Router();
 
@@ -25,6 +25,19 @@ authRouter.post("/signup", async (req, res) => {
         password: hashedPassword,
       },
     });
+
+    const token = createToken({
+      id: newUser.id,
+      name: newUser.name || "",
+      email: newUser.email,
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
     return res.status(201).json({
       message: "User created!",
       user: { id: newUser.id, email: newUser.email },
@@ -45,13 +58,22 @@ authRouter.post("/signin", async (req, res) => {
       return res.status(400).json({ message: "User does not exists!" });
     }
     const isMatch = await bcrypt.compare(password, stored.password);
-    if(isMatch){
-        const token = createToken({
-            id: stored.id,
-            name: stored.name || "", 
-            email: stored.email
-        })
-        return res.status(200).json({token, message: "Signed in successfully"});
+    if (isMatch) {
+      const token = createToken({
+        id: stored.id,
+        name: stored.name || "",
+        email: stored.email,
+      });
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      return res.status(200).json({
+        message: "Signed in successfully",
+        user: { id: stored.id, email: stored.email, name: stored.name },
+      });
     }
   } catch (error) {
     console.error("Signin error:", error);
